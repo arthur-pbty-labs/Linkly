@@ -3,10 +3,11 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { generateShortCode, generateQRCode, isValidUrl, sanitizeUrl } from "@/lib/utils"
+import type { Session } from "next-auth"
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions) as Session | null
     
     if (!session?.user) {
       return NextResponse.json(
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions) as Session | null
     
     // Génération du code court unique
     let shortCode: string

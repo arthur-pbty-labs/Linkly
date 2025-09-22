@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import type { Session } from "next-auth"
 
 export async function DELETE(
   request: NextRequest,
@@ -9,7 +10,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions) as Session | null
     
     if (!session?.user) {
       return NextResponse.json(
