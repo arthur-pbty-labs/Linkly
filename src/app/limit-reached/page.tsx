@@ -1,17 +1,17 @@
 import Link from "next/link"
-import { AlertTriangle } from "lucide-react"
+import { Ban } from "lucide-react"
 
-export default function ErrorPage() {
+export default function LimitReachedPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 text-center">
         <div>
-          <AlertTriangle className="mx-auto h-24 w-24 text-red-500" />
+          <Ban className="mx-auto h-24 w-24 text-red-500" />
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Erreur
+            Limite atteinte
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Une erreur s'est produite lors du traitement de votre demande.
+            Ce lien a atteint son nombre maximum de clics et n'est plus disponible.
           </p>
         </div>
         <div>

@@ -1,46 +1,49 @@
-# Linkly
+# Linkly - Raccourcisseur de liens
 
-Linkly est un raccourcisseur de liens moderne qui permet de transformer vos longues URL en liens courts, partageables et personnalisables.
+Linkly est une application web complète de raccourcissement de liens construite avec Next.js, Tailwind CSS, Prisma, et SQLite. Elle offre des fonctionnalités avancées d'authentification, de gestion des liens, et de génération de QR codes.
 
-## 🚀 Fonctionnalités
+## ✨ Fonctionnalités
 
 ### Pour tous les utilisateurs
-- ✅ **Raccourcissement d'URL instantané** - Transformez n'importe quelle URL longue en lien court
-- ✅ **Génération automatique de QR codes** - Chaque lien génère automatiquement un QR code téléchargeable
-- ✅ **Interface responsive** - Design moderne adapté à tous les appareils
-- ✅ **Liens temporaires** - Les utilisateurs anonymes bénéficient de liens valides 7 jours
+- ✅ Création de liens courts avec génération automatique de QR codes
+- ✅ Redirection rapide et fiable
+- ✅ Liens anonymes avec expiration automatique après 7 jours
 
 ### Pour les utilisateurs connectés
-- ✅ **Authentification OAuth** - Connexion via GitHub et Google
-- ✅ **Codes personnalisés** - Créez des liens avec vos propres codes
-- ✅ **Expiration personnalisée** - Définissez votre propre date d'expiration
-- ✅ **Limitation de clics** - Configurez un nombre maximum de clics
-- ✅ **Usage unique** - Liens qui se désactivent après le premier clic
-- ✅ **Tableau de bord** - Interface complète pour gérer vos liens
-- ✅ **Statistiques détaillées** - Suivez les clics, dates et analytiques
-- ✅ **Gestion des liens** - Supprimez et consultez l'historique de vos liens
+- ✅ Authentification via GitHub et Google (NextAuth)
+- ✅ Tableau de bord personnel pour gérer ses liens
+- ✅ Options avancées :
+  - Date d'expiration personnalisée
+  - Limite de clics maximum
+  - Liens à usage unique
+- ✅ Statistiques détaillées :
+  - Nombre de clics
+  - Date de création
+  - Dernier accès
+- ✅ Suppression des liens
+- ✅ Téléchargement des QR codes
 
-## 🛠️ Technologies utilisées
+## 🛠 Technologies utilisées
 
-- **Frontend**: Next.js 15, TypeScript, Tailwind CSS
+- **Frontend**: Next.js 14, TypeScript, Tailwind CSS
 - **Backend**: API Routes Next.js
-- **Base de données**: Prisma ORM avec SQLite
-- **Authentification**: NextAuth.js (GitHub + Google)
-- **QR Codes**: Bibliothèque qrcode
-- **Déploiement**: Docker + Docker Compose
+- **Base de données**: SQLite avec Prisma ORM
+- **Authentification**: NextAuth.js (GitHub, Google)
+- **QR Codes**: qrcode library
+- **Déploiement**: Docker & Docker Compose
 
-## 📦 Installation et déploiement
+## 🚀 Installation et développement
 
 ### Prérequis
-- Node.js 18+
-- Docker et Docker Compose (pour le déploiement)
+- Node.js 18 ou plus récent
+- npm ou yarn
 
-### Installation locale
+### Installation
 
 1. **Cloner le projet**
 ```bash
-git clone https://github.com/arthur-pbty/Linkly.git
-cd Linkly
+git clone <url-du-repo>
+cd linkly
 ```
 
 2. **Installer les dépendances**
@@ -48,20 +51,23 @@ cd Linkly
 npm install
 ```
 
-3. **Configuration de l'environnement**
-```bash
-cp .env.example .env.local
-```
-
-Remplissez les variables d'environnement dans `.env.local`:
+3. **Configurer l'environnement**
+Variables requises dans `.env` :
 ```env
+# Base de données
 DATABASE_URL="file:./dev.db"
-NEXTAUTH_SECRET="votre-clé-secrète-ici"
+
+# NextAuth
 NEXTAUTH_URL="http://localhost:3000"
-GITHUB_CLIENT_ID="votre-github-client-id"
-GITHUB_CLIENT_SECRET="votre-github-client-secret"
-GOOGLE_CLIENT_ID="votre-google-client-id"
-GOOGLE_CLIENT_SECRET="votre-google-client-secret"
+NEXTAUTH_SECRET="your-secret-key-change-this-in-production"
+
+# GitHub OAuth (optionnel pour le développement)
+GITHUB_ID="your-github-client-id"
+GITHUB_SECRET="your-github-client-secret"
+
+# Google OAuth (optionnel pour le développement)
+GOOGLE_ID="your-google-client-id"
+GOOGLE_SECRET="your-google-client-secret"
 ```
 
 4. **Initialiser la base de données**
@@ -75,76 +81,15 @@ npx prisma db push
 npm run dev
 ```
 
-L'application sera accessible sur `http://localhost:3000`
+## 🐳 Déploiement avec Docker
 
-### Déploiement avec Docker
-
-1. **Construction et lancement**
 ```bash
-docker-compose up --build
+# Créer le répertoire pour la base de données
+mkdir -p data
+
+# Mettre à jour les variables d'environnement dans docker-compose.yml
+# avec vos vraies clés OAuth
+
+# Lancer l'application
+docker-compose up -d
 ```
-
-L'application sera accessible sur `http://localhost:3000`
-
-## 📂 Structure du projet
-
-```
-├── src/
-│   ├── app/                    # Next.js App Router
-│   │   ├── api/               # API Routes
-│   │   ├── dashboard/         # Tableau de bord utilisateur
-│   │   ├── [shortCode]/       # Redirection des liens courts
-│   │   └── page.tsx           # Page d'accueil
-│   ├── components/            # Composants React
-│   ├── lib/                   # Utilitaires et configurations
-│   └── types/                 # Définitions TypeScript
-├── prisma/                    # Schéma de base de données
-├── Dockerfile                 # Configuration Docker
-├── docker-compose.yml         # Orchestration Docker
-└── tailwind.config.js         # Configuration Tailwind CSS
-```
-
-## 🎯 API Endpoints
-
-- `POST /api/links` - Créer un nouveau lien court
-- `GET /api/links` - Récupérer les liens de l'utilisateur connecté  
-- `DELETE /api/links/[id]` - Supprimer un lien
-- `GET /[shortCode]` - Redirection vers l'URL originale
-
-## 🔐 Sécurité
-
-- Validation des URLs
-- Protection contre les liens malveillants
-- Gestion des expirations automatiques
-- Authentification sécurisée via OAuth
-- Sessions JWT pour les performances
-
-## 📊 Fonctionnalités avancées
-
-- **Analytics en temps réel** - Suivi des clics par date, pays, et user agent
-- **QR codes personnalisables** - Génération et téléchargement automatiques
-- **Interface multilingue** - Interface en français avec support i18n
-- **Design responsive** - Optimisé pour mobile, tablette et desktop
-- **Performance optimisée** - Build statique Next.js avec optimisations
-
-## 🤝 Contribution
-
-Les contributions sont les bienvenues ! N'hésitez pas à :
-
-1. Fork le projet
-2. Créer une branche feature (`git checkout -b feature/nouvelle-fonctionnalite`)
-3. Commiter vos changements (`git commit -m 'Ajouter nouvelle fonctionnalité'`)
-4. Pusher vers la branche (`git push origin feature/nouvelle-fonctionnalite`)
-5. Ouvrir une Pull Request
-
-## 📄 Licence
-
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
-
-## 📞 Support
-
-Pour toute question ou support, veuillez ouvrir une issue sur GitHub.
-
----
-
-Développé avec ❤️ par [Arthur](https://github.com/arthur-pbty)

@@ -1,27 +1,26 @@
-import Link from 'next/link'
-import { AlertCircle } from 'lucide-react'
+import Link from "next/link"
+import { Clock } from "lucide-react"
 
 export default function ExpiredPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-100 flex items-center justify-center">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
-        <div className="mb-6">
-          <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 text-center">
+        <div>
+          <Clock className="mx-auto h-24 w-24 text-red-500" />
+          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
             Lien expiré
-          </h1>
-          <p className="text-gray-600">
-            Ce lien n&apos;est plus valide. Il a peut-être expiré ou atteint sa limite d&apos;utilisation.
+          </h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Ce lien a expiré et n'est plus disponible.
           </p>
         </div>
-        
-        <div className="space-y-4">
-          <Link href="/" className="btn-primary w-full block">
-            Créer un nouveau lien
+        <div>
+          <Link
+            href="/"
+            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Retour à l'accueil
           </Link>
-          <p className="text-sm text-gray-500">
-            Contactez la personne qui vous a partagé ce lien pour obtenir un nouveau lien valide.
-          </p>
         </div>
       </div>
     </div>

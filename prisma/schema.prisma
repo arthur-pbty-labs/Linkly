@@ -16,18 +16,17 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-  @@map("accounts")
 }
 
 model Session {
@@ -36,8 +35,6 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("sessions")
 }
 
 model User {
@@ -49,8 +46,6 @@ model User {
   accounts      Account[]
   sessions      Session[]
   links         Link[]
-
-  @@map("users")
 }
 
 model VerificationToken {
@@ -59,38 +54,22 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-  @@map("verificationtokens")
 }
 
 model Link {
-  id          String    @id @default(cuid())
-  originalUrl String
-  shortCode   String    @unique
-  title       String?
-  description String?
-  expiresAt   DateTime?
-  maxClicks   Int?
-  isActive    Boolean   @default(true)
-  isOneTime   Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  userId      String?
-  user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  clicks      Click[]
+  id            String   @id @default(cuid())
+  shortCode     String   @unique
+  originalUrl   String
+  qrCode        String?
+  clicks        Int      @default(0)
+  maxClicks     Int?
+  expiresAt     DateTime?
+  createdAt     DateTime @default(now())
+  lastAccessAt  DateTime?
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isOneTime     Boolean  @default(false)
 
-  @@map("links")
-}
-
-model Click {
-  id        String   @id @default(cuid())
-  linkId    String
-  link      Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
-  userAgent String?
-  referer   String?
-  ip        String?
-  country   String?
-  city      String?
-  createdAt DateTime @default(now())
-
-  @@map("clicks")
+  @@index([shortCode])
+  @@index([userId])
 }

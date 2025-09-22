@@ -1,108 +1,109 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
-import { generateShortCode, isValidUrl, formatUrl, getDaysFromNow } from '@/lib/utils'
-
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json()
-    const { url, customCode, expiresAt, maxClicks, isOneTime } = body
-
-    // Validate URL
-    if (!url || !isValidUrl(url)) {
-      return NextResponse.json(
-        { message: 'URL invalide' },
-        { status: 400 }
-      )
-    }
-
-    const session = await getServerSession(authOptions)
-    const formattedUrl = formatUrl(url)
-
-    // Generate or validate short code
-    let shortCode = customCode
-    if (customCode) {
-      // Check if custom code is already taken
-      const existing = await prisma.link.findUnique({
-        where: { shortCode: customCode }
-      })
-      if (existing) {
-        return NextResponse.json(
-          { message: 'Ce code personnalisé est déjà utilisé' },
-          { status: 400 }
-        )
-      }
-    } else {
-      // Generate unique short code
-      do {
-        shortCode = generateShortCode()
-      } while (await prisma.link.findUnique({ where: { shortCode } }))
-    }
-
-    // Set expiration date
-    let expirationDate: Date | null = null
-    if (session && expiresAt) {
-      expirationDate = new Date(expiresAt)
-    } else if (!session) {
-      // Anonymous users: 7 days expiration
-      expirationDate = getDaysFromNow(7)
-    }
-
-    // Create the link
-    const link = await prisma.link.create({
-      data: {
-        originalUrl: formattedUrl,
-        shortCode,
-        expiresAt: expirationDate,
-        maxClicks: session ? maxClicks : undefined,
-        isOneTime: session ? isOneTime : false,
-        userId: session?.user?.id || null,
-      },
-    })
-
-    return NextResponse.json(link)
-  } catch (error) {
-    console.error('Error creating link:', error)
-    return NextResponse.json(
-      { message: 'Erreur interne du serveur' },
-      { status: 500 }
-    )
-  }
-}
+import { NextRequest, NextResponse } from "next/server"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
+import { prisma } from "@/lib/prisma"
+import { generateShortCode, generateQRCode, isValidUrl, sanitizeUrl } from "@/lib/utils"
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session) {
+    if (!session?.user) {
       return NextResponse.json(
-        { message: 'Non autorisé' },
+        { error: "Authentification requise" },
         { status: 401 }
       )
     }
 
     const links = await prisma.link.findMany({
-      where: {
-        userId: session.user?.id,
-      },
-      include: {
-        _count: {
-          select: {
-            clicks: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      where: { userId: session.user.id },
+      orderBy: { createdAt: 'desc' },
     })
 
     return NextResponse.json(links)
   } catch (error) {
-    console.error('Error fetching links:', error)
+    console.error("Erreur lors de la récupération des liens:", error)
     return NextResponse.json(
-      { message: 'Erreur interne du serveur' },
+      { error: "Erreur interne du serveur" },
+      { status: 500 }
+    )
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { originalUrl, expiresAt, maxClicks, isOneTime } = body
+
+    if (!originalUrl) {
+      return NextResponse.json(
+        { error: "L'URL est requise" },
+        { status: 400 }
+      )
+    }
+
+    const sanitizedUrl = sanitizeUrl(originalUrl)
+    
+    if (!isValidUrl(sanitizedUrl)) {
+      return NextResponse.json(
+        { error: "URL invalide" },
+        { status: 400 }
+      )
+    }
+
+    const session = await getServerSession(authOptions)
+    
+    // Génération du code court unique
+    let shortCode: string
+    let isUnique = false
+    
+    do {
+      shortCode = generateShortCode()
+      const existing = await prisma.link.findUnique({
+        where: { shortCode }
+      })
+      isUnique = !existing
+    } while (!isUnique)
+
+    // Pour les utilisateurs non connectés, expiration automatique après 7 jours
+    let finalExpiresAt: Date | null = null
+    
+    if (!session?.user) {
+      finalExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 jours
+    } else if (expiresAt) {
+      finalExpiresAt = new Date(expiresAt)
+    }
+
+    // Génération du QR code
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+    const shortUrl = `${baseUrl}/${shortCode}`
+    const qrCode = await generateQRCode(shortUrl)
+
+    const link = await prisma.link.create({
+      data: {
+        shortCode,
+        originalUrl: sanitizedUrl,
+        qrCode,
+        expiresAt: finalExpiresAt,
+        maxClicks: session?.user ? maxClicks : null,
+        isOneTime: session?.user ? isOneTime || false : false,
+        userId: session?.user?.id || null,
+      },
+    })
+
+    return NextResponse.json({
+      id: link.id,
+      shortCode: link.shortCode,
+      shortUrl,
+      originalUrl: link.originalUrl,
+      qrCode: link.qrCode,
+      expiresAt: link.expiresAt,
+      createdAt: link.createdAt,
+    })
+  } catch (error) {
+    console.error("Erreur lors de la création du lien:", error)
+    return NextResponse.json(
+      { error: "Erreur interne du serveur" },
       { status: 500 }
     )
   }

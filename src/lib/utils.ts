@@ -1,10 +1,17 @@
-export function generateShortCode(length: number = 6): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  let result = ''
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length))
+import { nanoid } from 'nanoid'
+import QRCode from 'qrcode'
+
+export function generateShortCode(): string {
+  return nanoid(8)
+}
+
+export async function generateQRCode(url: string): Promise<string> {
+  try {
+    return await QRCode.toDataURL(url)
+  } catch (error) {
+    console.error('Erreur lors de la génération du QR code:', error)
+    throw new Error('Impossible de générer le QR code')
   }
-  return result
 }
 
 export function isValidUrl(url: string): boolean {
@@ -16,25 +23,9 @@ export function isValidUrl(url: string): boolean {
   }
 }
 
-export function formatUrl(url: string): string {
+export function sanitizeUrl(url: string): string {
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
     return `https://${url}`
   }
   return url
-}
-
-export function getDaysFromNow(days: number): Date {
-  const date = new Date()
-  date.setDate(date.getDate() + days)
-  return date
-}
-
-export function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat('fr-FR', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date)
 }

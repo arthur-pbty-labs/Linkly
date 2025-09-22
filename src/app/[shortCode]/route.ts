@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { headers } from 'next/headers'
+import { NextRequest, NextResponse } from "next/server"
+import { prisma } from "@/lib/prisma"
 
 export async function GET(
   request: NextRequest,
@@ -8,74 +7,48 @@ export async function GET(
 ) {
   try {
     const { shortCode } = await params
-    
-    // Find the link
+
     const link = await prisma.link.findUnique({
-      where: { shortCode },
+      where: { shortCode }
     })
 
     if (!link) {
       return NextResponse.redirect(new URL('/404', request.url))
     }
 
-    // Check if link is active
-    if (!link.isActive) {
-      return NextResponse.redirect(new URL('/expired', request.url))
-    }
-
-    // Check if link has expired
+    // Vérifier si le lien a expiré
     if (link.expiresAt && new Date() > link.expiresAt) {
-      await prisma.link.update({
-        where: { id: link.id },
-        data: { isActive: false },
+      // Supprimer le lien expiré
+      await prisma.link.delete({
+        where: { id: link.id }
       })
       return NextResponse.redirect(new URL('/expired', request.url))
     }
 
-    // Check if max clicks reached
-    if (link.maxClicks) {
-      const clickCount = await prisma.click.count({
-        where: { linkId: link.id },
-      })
-      
-      if (clickCount >= link.maxClicks) {
-        await prisma.link.update({
-          where: { id: link.id },
-          data: { isActive: false },
-        })
-        return NextResponse.redirect(new URL('/expired', request.url))
-      }
+    // Vérifier si le nombre maximum de clics est atteint
+    if (link.maxClicks && link.clicks >= link.maxClicks) {
+      return NextResponse.redirect(new URL('/limit-reached', request.url))
     }
 
-    // Get request headers for analytics
-    const headersList = await headers()
-    const userAgent = headersList.get('user-agent') || undefined
-    const referer = headersList.get('referer') || undefined
-    const forwarded = headersList.get('x-forwarded-for')
-    const ip = forwarded?.split(',')[0] || headersList.get('x-real-ip') || undefined
-
-    // Record the click
-    await prisma.click.create({
+    // Mettre à jour les statistiques
+    await prisma.link.update({
+      where: { id: link.id },
       data: {
-        linkId: link.id,
-        userAgent,
-        referer,
-        ip,
+        clicks: { increment: 1 },
+        lastAccessAt: new Date(),
       },
     })
 
-    // If it's a one-time link, deactivate it
+    // Si c'est un lien à usage unique, le supprimer après utilisation
     if (link.isOneTime) {
-      await prisma.link.update({
-        where: { id: link.id },
-        data: { isActive: false },
+      await prisma.link.delete({
+        where: { id: link.id }
       })
     }
 
-    // Redirect to the original URL
     return NextResponse.redirect(link.originalUrl)
   } catch (error) {
-    console.error('Error redirecting:', error)
+    console.error("Erreur lors de la redirection:", error)
     return NextResponse.redirect(new URL('/error', request.url))
   }
 }
