@@ -6,8 +6,9 @@ import { useRouter } from "next/navigation"
 import { Header } from "@/components/header"
 import { LinkForm } from "@/components/link-form"
 import { Trash2, Copy, Eye, Calendar, MousePointer, QrCode, Check } from "lucide-react"
+import Link from "next/link"
 
-interface Link {
+interface LinkData {
   id: string
   shortCode: string
   originalUrl: string
@@ -23,7 +24,7 @@ interface Link {
 export default function Dashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const [links, setLinks] = useState<Link[]>([])
+  const [links, setLinks] = useState<LinkData[]>([])
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState<string | null>(null)
 
@@ -137,9 +138,12 @@ export default function Dashboard() {
                   <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-2">
-                        <h3 className="text-lg font-semibold text-gray-900 truncate">
+                        <Link
+                          href={`/dashboard/${link.id}`}
+                          className="text-lg font-semibold text-blue-600 hover:text-blue-700 truncate transition-colors"
+                        >
                           {baseUrl}/{link.shortCode}
-                        </h3>
+                        </Link>
                         <button
                           onClick={() => copyToClipboard(`${baseUrl}/${link.shortCode}`, link.shortCode)}
                           className="p-1 text-gray-400 hover:text-blue-600 transition-colors"

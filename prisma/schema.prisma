@@ -69,7 +69,19 @@ model Link {
   userId        String?
   user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   isOneTime     Boolean  @default(false)
+  clickHistory  ClickHistory[]
 
   @@index([shortCode])
   @@index([userId])
+}
+
+model ClickHistory {
+  id      String   @id @default(cuid())
+  linkId  String
+  link    Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  date    DateTime @default(now())
+  clicks  Int      @default(1)
+
+  @@unique([linkId, date])
+  @@index([linkId, date])
 }

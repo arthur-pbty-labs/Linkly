@@ -30,14 +30,37 @@ export async function GET(
       return NextResponse.redirect(new URL('/limit-reached', request.url))
     }
 
-    // Mettre à jour les statistiques
-    await prisma.link.update({
-      where: { id: link.id },
-      data: {
-        clicks: { increment: 1 },
-        lastAccessAt: new Date(),
-      },
-    })
+    // Mettre à jour les statistiques et l'historique
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    await prisma.$transaction([
+      // Mettre à jour le compteur principal
+      prisma.link.update({
+        where: { id: link.id },
+        data: {
+          clicks: { increment: 1 },
+          lastAccessAt: new Date(),
+        },
+      }),
+      // Créer ou mettre à jour l'entrée d'historique pour aujourd'hui
+      prisma.clickHistory.upsert({
+        where: {
+          linkId_date: {
+            linkId: link.id,
+            date: today
+          }
+        },
+        update: {
+          clicks: { increment: 1 }
+        },
+        create: {
+          linkId: link.id,
+          date: today,
+          clicks: 1
+        }
+      })
+    ])
 
     // Si c'est un lien à usage unique, le supprimer après utilisation
     if (link.isOneTime) {
