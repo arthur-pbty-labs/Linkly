@@ -2,10 +2,26 @@
 
 import { useState } from "react"
 import { useSession } from "next-auth/react"
+import Link from "next/link"
 import { Link as LinkIcon, Calendar, MousePointer, Zap, QrCode, Copy, Check } from "lucide-react"
 
+interface Link {
+  id: string
+  shortCode: string
+  shortUrl: string
+  originalUrl: string
+  qrCode?: string
+  clicks: number
+  maxClicks?: number
+  expiresAt?: string
+  createdAt: string
+  lastAccessAt?: string
+  userId?: string
+  isOneTime: boolean
+}
+
 interface LinkFormProps {
-  onLinkCreated?: (link: any) => void
+  onLinkCreated?: (link: Link) => void
 }
 
 export function LinkForm({ onLinkCreated }: LinkFormProps) {
@@ -15,7 +31,7 @@ export function LinkForm({ onLinkCreated }: LinkFormProps) {
   const [maxClicks, setMaxClicks] = useState("")
   const [isOneTime, setIsOneTime] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [result, setResult] = useState<any>(null)
+  const [result, setResult] = useState<Link | null>(null)
   const [copied, setCopied] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -95,7 +111,7 @@ export function LinkForm({ onLinkCreated }: LinkFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="expiresAt" className="block text-sm font-medium text-gray-700 mb-2">
-                Date d'expiration (optionnel)
+                Date d&apos;expiration (optionnel)
               </label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -160,10 +176,10 @@ export function LinkForm({ onLinkCreated }: LinkFormProps) {
           <p className="text-sm text-gray-600 text-center">
             💡 Les liens créés sans compte expirent automatiquement après 7 jours.
             <br />
-            <a href="/auth/signin" className="text-blue-600 hover:text-blue-500">
+            <Link href="/auth/signin" className="text-blue-600 hover:text-blue-500">
               Connectez-vous
-            </a>{" "}
-            pour plus d'options.
+            </Link>{" "}
+            pour plus d&apos;options.
           </p>
         )}
       </form>

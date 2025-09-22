@@ -127,7 +127,7 @@ export default function Dashboard() {
           {links.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-lg shadow">
               <p className="text-gray-500 text-lg">
-                Vous n'avez encore créé aucun lien.
+                Vous n&apos;avez encore créé aucun lien.
               </p>
             </div>
           ) : (

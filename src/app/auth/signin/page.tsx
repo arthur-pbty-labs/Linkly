@@ -4,8 +4,16 @@ import { signIn, getProviders } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { Github, Mail } from "lucide-react"
 
+interface Provider {
+  id: string
+  name: string
+  type: string
+  signinUrl: string
+  callbackUrl: string
+}
+
 export default function SignIn() {
-  const [providers, setProviders] = useState<Record<string, any> | null>(null)
+  const [providers, setProviders] = useState<Record<string, Provider> | null>(null)
 
   useEffect(() => {
     const setAuthProviders = async () => {
@@ -36,7 +44,7 @@ export default function SignIn() {
         </div>
         <div className="mt-8 space-y-6">
           <div className="space-y-4">
-            {Object.values(providers).map((provider: any) => (
+            {Object.values(providers).map((provider: Provider) => (
               <div key={provider.name}>
                 <button
                   onClick={() => signIn(provider.id, { callbackUrl: "/dashboard" })}

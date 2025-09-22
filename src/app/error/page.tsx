@@ -11,7 +11,7 @@ export default function ErrorPage() {
             Erreur
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Une erreur s'est produite lors du traitement de votre demande.
+            Une erreur s&apos;est produite lors du traitement de votre demande.
           </p>
         </div>
         <div>
@@ -19,7 +19,7 @@ export default function ErrorPage() {
             href="/"
             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
-            Retour à l'accueil
+            Retour à l&apos;accueil
           </Link>
         </div>
       </div>

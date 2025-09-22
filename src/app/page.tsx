@@ -1,6 +1,5 @@
 import { Header } from "@/components/header"
 import { LinkForm } from "@/components/link-form"
-import { Link, Shield, BarChart3, QrCode } from "lucide-react"
 
 export default function Home() {
   return (
