@@ -2,7 +2,8 @@
 
 import { signIn, getProviders } from "next-auth/react"
 import { useEffect, useState } from "react"
-import { Github, Mail } from "lucide-react"
+import { Github, Mail, Home } from "lucide-react"
+import Link from "next/link"
 
 interface Provider {
   id: string
@@ -65,6 +66,19 @@ export default function SignIn() {
                 </button>
               </div>
             ))}
+          </div>
+          
+          {/* Bouton de retour à l'accueil */}
+          <div className="pt-4">
+            <Link
+              href="/"
+              className="group relative w-full flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+            >
+              <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+                <Home className="h-5 w-5 text-gray-400" />
+              </span>
+              Retour à l&apos;accueil
+            </Link>
           </div>
         </div>
       </div>

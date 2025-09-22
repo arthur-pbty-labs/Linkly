@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { generateShortCode, generateQRCode, isValidUrl, sanitizeUrl } from "@/lib/utils"
+import { generateShortCode, generateQRCode, isValidUrl, sanitizeUrl, isValidCustomCode, isReservedCode } from "@/lib/utils"
 import type { Session } from "next-auth"
 
 export async function GET() {
@@ -34,7 +34,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { originalUrl, expiresAt, maxClicks, isOneTime } = body
+    const { originalUrl, customCode, expiresAt, maxClicks, isOneTime } = body
 
     if (!originalUrl) {
       return NextResponse.json(
@@ -54,17 +54,51 @@ export async function POST(request: NextRequest) {
 
     const session = await getServerSession(authOptions) as Session | null
     
-    // Génération du code court unique
     let shortCode: string
-    let isUnique = false
-    
-    do {
-      shortCode = generateShortCode()
-      const existing = await prisma.link.findUnique({
-        where: { shortCode }
+
+    // Si un code personnalisé est fourni et que l'utilisateur est connecté
+    if (customCode && session?.user) {
+      // Validation du code personnalisé
+      if (!isValidCustomCode(customCode)) {
+        return NextResponse.json(
+          { error: "Le code personnalisé doit contenir 3-20 caractères (lettres minuscules, chiffres, tirets et underscores uniquement)" },
+          { status: 400 }
+        )
+      }
+
+      // Vérifier que ce n'est pas un code réservé
+      if (isReservedCode(customCode)) {
+        return NextResponse.json(
+          { error: "Ce code est réservé et ne peut pas être utilisé" },
+          { status: 400 }
+        )
+      }
+
+      // Vérifier que le code n'est pas déjà utilisé
+      const existingLink = await prisma.link.findUnique({
+        where: { shortCode: customCode }
       })
-      isUnique = !existing
-    } while (!isUnique)
+
+      if (existingLink) {
+        return NextResponse.json(
+          { error: "Ce code personnalisé est déjà utilisé" },
+          { status: 409 }
+        )
+      }
+
+      shortCode = customCode
+    } else {
+      // Génération du code court unique automatique
+      let isUnique = false
+      
+      do {
+        shortCode = generateShortCode()
+        const existing = await prisma.link.findUnique({
+          where: { shortCode }
+        })
+        isUnique = !existing
+      } while (!isUnique)
+    }
 
     // Pour les utilisateurs non connectés, expiration automatique après 7 jours
     let finalExpiresAt: Date | null = null

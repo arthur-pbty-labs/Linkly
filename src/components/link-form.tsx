@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
-import { Link as LinkIcon, Calendar, MousePointer, Zap, QrCode, Copy, Check } from "lucide-react"
+import { Link as LinkIcon, Calendar, MousePointer, Zap, QrCode, Copy, Check, Edit3 } from "lucide-react"
 
 interface Link {
   id: string
@@ -27,6 +27,7 @@ interface LinkFormProps {
 export function LinkForm({ onLinkCreated }: LinkFormProps) {
   const { data: session } = useSession()
   const [url, setUrl] = useState("")
+  const [customCode, setCustomCode] = useState("")
   const [expiresAt, setExpiresAt] = useState("")
   const [maxClicks, setMaxClicks] = useState("")
   const [isOneTime, setIsOneTime] = useState(false)
@@ -47,6 +48,7 @@ export function LinkForm({ onLinkCreated }: LinkFormProps) {
         },
         body: JSON.stringify({
           originalUrl: url,
+          customCode: customCode || null,
           expiresAt: expiresAt || null,
           maxClicks: maxClicks ? parseInt(maxClicks) : null,
           isOneTime,
@@ -61,6 +63,7 @@ export function LinkForm({ onLinkCreated }: LinkFormProps) {
       const link = await response.json()
       setResult(link)
       setUrl("")
+      setCustomCode("")
       setExpiresAt("")
       setMaxClicks("")
       setIsOneTime(false)
@@ -106,6 +109,34 @@ export function LinkForm({ onLinkCreated }: LinkFormProps) {
             />
           </div>
         </div>
+
+        {session?.user && (
+          <div>
+            <label htmlFor="customCode" className="block text-sm font-medium text-gray-700 mb-2">
+              <Edit3 className="inline h-4 w-4 mr-1" />
+              Code personnalisé (optionnel)
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-3 text-gray-500 text-sm">
+                {typeof window !== "undefined" ? window.location.origin : ""}/
+              </span>
+              <input
+                type="text"
+                id="customCode"
+                value={customCode}
+                onChange={(e) => setCustomCode(e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, ''))}
+                placeholder="mon-lien"
+                pattern="[a-z0-9-_]{3,20}"
+                minLength={3}
+                maxLength={20}
+                className="block w-full pl-20 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <p className="mt-1 text-xs text-gray-500">
+              3-20 caractères, lettres minuscules, chiffres, tirets et underscores uniquement
+            </p>
+          </div>
+        )}
 
         {session?.user && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

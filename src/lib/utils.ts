@@ -29,3 +29,19 @@ export function sanitizeUrl(url: string): string {
   }
   return url
 }
+
+export function isValidCustomCode(code: string): boolean {
+  return /^[a-z0-9-_]{3,20}$/.test(code)
+}
+
+// Codes réservés que les utilisateurs ne peuvent pas utiliser
+export const  RESERVED_CODES = [
+  'api', 'auth', 'dashboard', 'admin', 'www', 'app', 'mail', 'ftp',
+  'login', 'register', 'signin', 'signup', 'logout', 'home', 'about',
+  'contact', 'help', 'support', 'docs', 'blog', 'news', 'static',
+  'assets', 'public', 'private', 'error', 'expired', 'limit-reached'
+]
+
+export function isReservedCode(code: string): boolean {
+  return RESERVED_CODES.includes(code.toLowerCase())
+}
