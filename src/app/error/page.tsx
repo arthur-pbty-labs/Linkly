@@ -1,5 +1,12 @@
 import Link from "next/link"
 import { AlertTriangle } from "lucide-react"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Erreur - Linkly",
+  description: "Une erreur s'est produite. Retournez à l'accueil pour créer de nouveaux liens raccourcis.",
+  robots: "noindex, nofollow",
+}
 
 export default function ErrorPage() {
   return (
@@ -7,9 +14,9 @@ export default function ErrorPage() {
       <div className="max-w-md w-full space-y-8 text-center">
         <div>
           <AlertTriangle className="mx-auto h-24 w-24 text-red-500" />
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+          <h1 className="mt-6 text-3xl font-extrabold text-gray-900">
             Erreur
-          </h2>
+          </h1>
           <p className="mt-2 text-sm text-gray-600">
             Une erreur s&apos;est produite lors du traitement de votre demande.
           </p>

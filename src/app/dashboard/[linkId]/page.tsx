@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { Header } from "@/components/header"
 import { ArrowLeft, Copy, Check, QrCode, Calendar, MousePointer, Eye, TrendingUp } from "lucide-react"
 import Link from "next/link"
+import Head from "next/head"
 
 interface LinkDetail {
   id: string
@@ -91,12 +92,19 @@ export default function LinkDetails({ params }: { params: Promise<{ linkId: stri
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
+    <>
+      <Head>
+        <title>{link ? `Analytics - ${link.shortCode}` : 'Analytics'} - Linkly</title>
+        <meta name="description" content={`Statistiques détaillées et analytics pour le lien ${link?.shortCode || 'raccourci'} avec graphiques de performance.`} />
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <Link
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="mb-8">
+            <Link
             href="/dashboard"
             className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-4"
           >
@@ -316,5 +324,6 @@ export default function LinkDetails({ params }: { params: Promise<{ linkId: stri
         </div>
       </main>
     </div>
+    </>
   )
 }

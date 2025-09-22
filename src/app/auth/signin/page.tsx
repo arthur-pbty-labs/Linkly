@@ -4,6 +4,7 @@ import { signIn, getProviders } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { Github, Mail, Home } from "lucide-react"
 import Link from "next/link"
+import Head from "next/head"
 
 interface Provider {
   id: string
@@ -33,18 +34,25 @@ export default function SignIn() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Connectez-vous à Linkly
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Accédez à votre tableau de bord et gérez vos liens
-          </p>
-        </div>
-        <div className="mt-8 space-y-6">
-          <div className="space-y-4">
+    <>
+      <Head>
+        <title>Connexion - Linkly</title>
+        <meta name="description" content="Connectez-vous à Linkly pour créer des liens personnalisés et accéder à vos analytics détaillés." />
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
+      
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <div>
+            <h1 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+              Connectez-vous à Linkly
+            </h1>
+            <p className="mt-2 text-center text-sm text-gray-600">
+              Accédez à votre tableau de bord et gérez vos liens
+            </p>
+          </div>
+          <div className="mt-8 space-y-6">
+            <div className="space-y-4">
             {Object.values(providers).map((provider: Provider) => (
               <div key={provider.name}>
                 <button
@@ -83,5 +91,6 @@ export default function SignIn() {
         </div>
       </div>
     </div>
+    </>
   )
 }

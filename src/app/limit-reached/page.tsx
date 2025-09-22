@@ -1,5 +1,12 @@
 import Link from "next/link"
 import { Ban } from "lucide-react"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Limite atteinte - Linkly",
+  description: "Ce lien a atteint son nombre maximum de clics. Créez un nouveau lien raccourci.",
+  robots: "noindex, nofollow",
+}
 
 export default function LimitReachedPage() {
   return (
@@ -7,9 +14,9 @@ export default function LimitReachedPage() {
       <div className="max-w-md w-full space-y-8 text-center">
         <div>
           <Ban className="mx-auto h-24 w-24 text-red-500" />
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+          <h1 className="mt-6 text-3xl font-extrabold text-gray-900">
             Limite atteinte
-          </h2>
+          </h1>
           <p className="mt-2 text-sm text-gray-600">
             Ce lien a atteint son nombre maximum de clics et n&apos;est plus disponible.
           </p>

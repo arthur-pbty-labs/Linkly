@@ -1,5 +1,12 @@
 import Link from "next/link"
 import { Clock } from "lucide-react"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Lien expiré - Linkly",
+  description: "Ce lien a expiré et n'est plus disponible. Créez un nouveau lien raccourci.",
+  robots: "noindex, nofollow",
+}
 
 export default function ExpiredPage() {
   return (
@@ -7,9 +14,9 @@ export default function ExpiredPage() {
       <div className="max-w-md w-full space-y-8 text-center">
         <div>
           <Clock className="mx-auto h-24 w-24 text-red-500" />
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+          <h1 className="mt-6 text-3xl font-extrabold text-gray-900">
             Lien expiré
-          </h2>
+          </h1>
           <p className="mt-2 text-sm text-gray-600">
             Ce lien a expiré et n&apos;est plus disponible.
           </p>
