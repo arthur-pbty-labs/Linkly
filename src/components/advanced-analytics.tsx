@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { AnalyticsChart } from './analytics-chart'
 import { Globe, Monitor, Calendar, Users } from 'lucide-react'
 
@@ -43,11 +43,7 @@ export function AdvancedAnalytics({ linkId }: AdvancedAnalyticsProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchAnalytics()
-  }, [linkId])
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     try {
       setError(null)
       const response = await fetch(`/api/links/${linkId}/analytics`)
@@ -69,7 +65,11 @@ export function AdvancedAnalytics({ linkId }: AdvancedAnalyticsProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [linkId])
+
+  useEffect(() => {
+    fetchAnalytics()
+  }, [fetchAnalytics])
 
   if (loading) {
     return (

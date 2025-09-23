@@ -3,13 +3,11 @@
  * Cette fonction résout le problème de sérialisation JSON avec les BigInt
  */
 
-type SerializableValue = string | number | boolean | null | undefined | SerializableObject | SerializableArray
+type SerializableValue = string | number | boolean | null | undefined | SerializableObject | SerializableValue[]
 
 interface SerializableObject {
   [key: string]: SerializableValue
 }
-
-interface SerializableArray extends Array<SerializableValue> {}
 
 /**
  * Convertit récursivement tous les BigInt en Number dans un objet
