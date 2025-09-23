@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({
   subsets: ["latin"],
+  variable: '--font-inter',
 });
 
 export const metadata: Metadata = {
@@ -69,21 +70,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html lang="fr" suppressHydrationWarning className={inter.variable}>
       <head>
         <link rel="canonical" href="https://linkly.serverarthur.duckdns.org" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#ffffff" />
         
         {/* Préconnexions pour améliorer les performances */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="//api.qrserver.com" />
-        
-        {/* Ressources critiques */}
-        <link rel="preload" href="/next.svg" as="image" />
         
         {/* Optimisations viewport */}
         <meta name="format-detection" content="telephone=no" />
@@ -94,7 +93,7 @@ export default function RootLayout({
         {/* Performance hints */}
         <meta httpEquiv="x-dns-prefetch-control" content="on" />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} font-sans antialiased`}>
         <ThemeProvider>
           <Providers>
             {children}

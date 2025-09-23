@@ -38,10 +38,14 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-md transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+      className="relative p-2 rounded-md transition-all duration-200 hover:bg-accent text-muted-foreground hover:text-accent-foreground"
       title={getLabel()}
+      aria-label={getLabel()}
     >
-      {getIcon()}
+      <div className="relative">
+        {getIcon()}
+        <span className="sr-only">{getLabel()}</span>
+      </div>
     </button>
   )
 }

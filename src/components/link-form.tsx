@@ -91,13 +91,13 @@ export function LinkForm({ onLinkCreated }: LinkFormProps) {
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-md">
+      <form onSubmit={handleSubmit} className="space-y-6 bg-card p-6 rounded-lg border border-border shadow-sm">
         <div>
-          <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="url" className="block text-sm font-medium text-card-foreground mb-2">
             URL à raccourcir
           </label>
           <div className="relative">
-            <LinkIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+            <LinkIcon className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
             <input
               type="url"
               id="url"
@@ -105,19 +105,19 @@ export function LinkForm({ onLinkCreated }: LinkFormProps) {
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://example.com"
               required
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              className="block w-full pl-10 pr-3 py-2 border border-input rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
             />
           </div>
         </div>
 
         {session?.user && (
           <div>
-            <label htmlFor="customCode" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="customCode" className="block text-sm font-medium text-card-foreground mb-2">
               <Edit3 className="inline h-4 w-4 mr-1" />
               Code personnalisé (optionnel)
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-3 text-gray-500 text-sm">
+              <span className="absolute left-3 top-3 text-muted-foreground text-sm">
                 {typeof window !== "undefined" ? window.location.origin : ""}/
               </span>
               <input
@@ -129,10 +129,10 @@ export function LinkForm({ onLinkCreated }: LinkFormProps) {
                 pattern="[a-z0-9-_]{3,20}"
                 minLength={3}
                 maxLength={20}
-                className="block w-full pl-20 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                className="block w-full pl-20 pr-3 py-2 border border-input rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
               />
             </div>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-muted-foreground">
               3-20 caractères, lettres minuscules, chiffres, tirets et underscores uniquement
             </p>
           </div>
@@ -141,28 +141,28 @@ export function LinkForm({ onLinkCreated }: LinkFormProps) {
         {session?.user && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="expiresAt" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="expiresAt" className="block text-sm font-medium text-card-foreground mb-2">
                 Date d&apos;expiration (optionnel)
               </label>
               <div className="relative">
-                <Calendar className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Calendar className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                 <input
                   type="datetime-local"
                   id="expiresAt"
                   value={expiresAt}
                   onChange={(e) => setExpiresAt(e.target.value)}
                   min={new Date().toISOString().slice(0, 16)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full pl-10 pr-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="maxClicks" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="maxClicks" className="block text-sm font-medium text-card-foreground mb-2">
                 Nombre max de clics (optionnel)
               </label>
               <div className="relative">
-                <MousePointer className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <MousePointer className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                 <input
                   type="number"
                   id="maxClicks"
@@ -170,7 +170,7 @@ export function LinkForm({ onLinkCreated }: LinkFormProps) {
                   onChange={(e) => setMaxClicks(e.target.value)}
                   min="1"
                   placeholder="Illimité"
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full pl-10 pr-3 py-2 border border-input rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                 />
               </div>
             </div>
@@ -184,9 +184,9 @@ export function LinkForm({ onLinkCreated }: LinkFormProps) {
               id="isOneTime"
               checked={isOneTime}
               onChange={(e) => setIsOneTime(e.target.checked)}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              className="h-4 w-4 text-primary focus:ring-ring border-input rounded"
             />
-            <label htmlFor="isOneTime" className="ml-2 block text-sm text-gray-700">
+            <label htmlFor="isOneTime" className="ml-2 block text-sm text-card-foreground">
               <div className="flex items-center">
                 <Zap className="h-4 w-4 mr-1" />
                 Lien à usage unique (supprimé après le premier clic)
@@ -198,16 +198,16 @@ export function LinkForm({ onLinkCreated }: LinkFormProps) {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {isLoading ? "Création en cours..." : "Raccourcir le lien"}
         </button>
 
         {!session?.user && (
-          <p className="text-sm text-gray-600 text-center">
+          <p className="text-sm text-muted-foreground text-center">
             💡 Les liens créés sans compte expirent automatiquement après 7 jours.
             <br />
-            <Link href="/auth/signin" className="text-blue-600 hover:text-blue-500">
+            <Link href="/auth/signin" className="text-primary hover:text-primary/80">
               Connectez-vous
             </Link>{" "}
             pour plus d&apos;options.
@@ -216,14 +216,14 @@ export function LinkForm({ onLinkCreated }: LinkFormProps) {
       </form>
 
       {result && (
-        <div className="mt-6 bg-green-50 border border-green-200 rounded-lg p-6">
-          <h3 className="text-lg font-medium text-green-800 mb-4">
+        <div className="mt-6 bg-success/10 border border-success/20 rounded-lg p-6">
+          <h3 className="text-lg font-medium text-success mb-4">
             ✅ Lien créé avec succès !
           </h3>
           
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-card-foreground mb-2">
                 Lien court
               </label>
               <div className="flex items-center space-x-2">

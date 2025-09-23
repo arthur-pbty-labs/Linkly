@@ -112,7 +112,7 @@ export function AdvancedAnalytics({ linkId }: AdvancedAnalyticsProps) {
 
   if (!analytics) {
     return (
-      <div className="text-center p-8 text-gray-500 dark:text-gray-400">
+      <div className="text-center p-8 text-muted-foreground">
         Impossible de charger les analytics
       </div>
     )
@@ -124,9 +124,9 @@ export function AdvancedAnalytics({ linkId }: AdvancedAnalyticsProps) {
       label: 'Appareils',
       data: analytics.deviceStats.map(d => d.count),
       backgroundColor: [
-        '#3B82F6', // Bleu
-        '#10B981', // Vert
-        '#F59E0B', // Orange
+        'rgb(var(--primary))', 
+        'rgb(var(--success))', 
+        'rgb(var(--warning))', 
       ],
     }]
   }
@@ -137,11 +137,11 @@ export function AdvancedAnalytics({ linkId }: AdvancedAnalyticsProps) {
       label: 'Navigateurs',
       data: analytics.browserStats.map(b => b.count),
       backgroundColor: [
-        '#EF4444', // Rouge
-        '#8B5CF6', // Violet
-        '#F59E0B', // Orange
-        '#10B981', // Vert
-        '#6B7280', // Gris
+        'rgb(var(--destructive))', 
+        'rgb(147 51 234)', // violet
+        'rgb(var(--warning))', 
+        'rgb(var(--success))', 
+        'rgb(var(--muted-foreground))', 
       ],
     }]
   }
@@ -156,8 +156,8 @@ export function AdvancedAnalytics({ linkId }: AdvancedAnalyticsProps) {
     datasets: [{
       label: 'Clics par jour',
       data: analytics.dailyStats.map(d => d.clicks),
-      borderColor: '#3B82F6',
-      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+      borderColor: 'rgb(var(--primary))',
+      backgroundColor: 'rgba(var(--primary), 0.1)',
       borderWidth: 2,
       fill: true,
     }]
@@ -168,7 +168,7 @@ export function AdvancedAnalytics({ linkId }: AdvancedAnalyticsProps) {
     datasets: [{
       label: 'Clics par pays',
       data: analytics.countryStats.slice(0, 10).map(c => c.count),
-      backgroundColor: '#3B82F6',
+      backgroundColor: 'rgb(var(--primary))',
     }]
   }
 
@@ -176,42 +176,42 @@ export function AdvancedAnalytics({ linkId }: AdvancedAnalyticsProps) {
     <div className="space-y-8">
       {/* Métriques principales */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border-l-4 border-blue-500">
+        <div className="bg-card p-6 rounded-lg border border-border shadow-sm border-l-4 border-l-primary">
           <div className="flex items-center">
-            <Calendar className="h-8 w-8 text-blue-500" />
+            <Calendar className="h-8 w-8 text-primary" />
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total des clics</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{analytics.totalClicks}</p>
+              <p className="text-sm font-medium text-muted-foreground">Total des clics</p>
+              <p className="text-2xl font-bold text-card-foreground">{analytics.totalClicks}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border-l-4 border-green-500">
+        <div className="bg-card p-6 rounded-lg border border-border shadow-sm border-l-4 border-l-success">
           <div className="flex items-center">
-            <Users className="h-8 w-8 text-green-500" />
+            <Users className="h-8 w-8 text-success" />
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Visiteurs uniques</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{analytics.uniqueClicks}</p>
+              <p className="text-sm font-medium text-muted-foreground">Visiteurs uniques</p>
+              <p className="text-2xl font-bold text-card-foreground">{analytics.uniqueClicks}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border-l-4 border-purple-500">
+        <div className="bg-card p-6 rounded-lg border border-border shadow-sm border-l-4 border-l-purple-500">
           <div className="flex items-center">
             <Globe className="h-8 w-8 text-purple-500" />
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Pays différents</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{analytics.countryStats.length}</p>
+              <p className="text-sm font-medium text-muted-foreground">Pays différents</p>
+              <p className="text-2xl font-bold text-card-foreground">{analytics.countryStats.length}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border-l-4 border-orange-500">
+        <div className="bg-card p-6 rounded-lg border border-border shadow-sm border-l-4 border-l-warning">
           <div className="flex items-center">
-            <Monitor className="h-8 w-8 text-orange-500" />
+            <Monitor className="h-8 w-8 text-warning" />
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Appareils</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{analytics.deviceStats.length}</p>
+              <p className="text-sm font-medium text-muted-foreground">Appareils</p>
+              <p className="text-2xl font-bold text-card-foreground">{analytics.deviceStats.length}</p>
             </div>
           </div>
         </div>
@@ -219,7 +219,7 @@ export function AdvancedAnalytics({ linkId }: AdvancedAnalyticsProps) {
 
       {/* Graphiques */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-card p-6 rounded-lg border border-border shadow-sm">
           <AnalyticsChart
             data={dailyChartData}
             type="line"
@@ -228,7 +228,7 @@ export function AdvancedAnalytics({ linkId }: AdvancedAnalyticsProps) {
           />
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-card p-6 rounded-lg border border-border shadow-sm">
           <AnalyticsChart
             data={deviceChartData}
             type="doughnut"
@@ -237,7 +237,7 @@ export function AdvancedAnalytics({ linkId }: AdvancedAnalyticsProps) {
           />
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-card p-6 rounded-lg border border-border shadow-sm">
           <AnalyticsChart
             data={browserChartData}
             type="doughnut"
@@ -246,7 +246,7 @@ export function AdvancedAnalytics({ linkId }: AdvancedAnalyticsProps) {
           />
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-card p-6 rounded-lg border border-border shadow-sm">
           <AnalyticsChart
             data={countryChartData}
             type="bar"
