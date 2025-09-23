@@ -100,51 +100,80 @@ function detectBrowser(userAgent: string): string {
 }
 
 export async function getAnalyticsSummary(linkId: string) {
-  const [
-    totalClicks,
-    uniqueClicks,
-    deviceStats,
-    browserStats,
-    countryStats,
-    dailyStats
-  ] = await Promise.all([
-    prisma.clickEvent.count({ where: { linkId } }),
-    prisma.clickEvent.groupBy({
-      by: ['ip'],
-      where: { linkId, ip: { not: null } },
-      _count: true
-    }),
-    prisma.clickEvent.groupBy({
-      by: ['device'],
-      where: { linkId, device: { not: null } },
-      _count: true
-    }),
-    prisma.clickEvent.groupBy({
-      by: ['browser'],
-      where: { linkId, browser: { not: null } },
-      _count: true
-    }),
-    prisma.clickEvent.groupBy({
-      by: ['country'],
-      where: { linkId, country: { not: null } },
-      _count: true
-    }),
-    prisma.$queryRaw`
-      SELECT DATE(timestamp) as date, COUNT(*) as clicks
-      FROM ClickEvent 
-      WHERE linkId = ${linkId}
-      GROUP BY DATE(timestamp)
-      ORDER BY date DESC
-      LIMIT 30
-    `
-  ])
+  try {
+    const [
+      totalClicks,
+      uniqueClicks,
+      deviceStats,
+      browserStats,
+      countryStats,
+      dailyStatsRaw
+    ] = await Promise.all([
+      prisma.clickEvent.count({ where: { linkId } }),
+      prisma.clickEvent.groupBy({
+        by: ['ip'],
+        where: { linkId, ip: { not: null } },
+        _count: true
+      }),
+      prisma.clickEvent.groupBy({
+        by: ['device'],
+        where: { linkId, device: { not: null } },
+        _count: true
+      }),
+      prisma.clickEvent.groupBy({
+        by: ['browser'],
+        where: { linkId, browser: { not: null } },
+        _count: true
+      }),
+      prisma.clickEvent.groupBy({
+        by: ['country'],
+        where: { linkId, country: { not: null } },
+        _count: true
+      }),
+      prisma.$queryRaw`
+        SELECT DATE(timestamp) as date, COUNT(*) as clicks
+        FROM ClickEvent 
+        WHERE linkId = ${linkId}
+        GROUP BY DATE(timestamp)
+        ORDER BY date DESC
+        LIMIT 30
+      `
+    ])
 
-  return {
-    totalClicks,
-    uniqueClicks: uniqueClicks.length,
-    deviceStats: deviceStats.map(d => ({ device: d.device, count: d._count })),
-    browserStats: browserStats.map(b => ({ browser: b.browser, count: b._count })),
-    countryStats: countryStats.map(c => ({ country: c.country, count: c._count })),
-    dailyStats
+    // Cast et convertir les données brutes
+    const dailyStats = (dailyStatsRaw as Array<{ date: string; clicks: bigint }>).map(row => ({
+      date: row.date,
+      clicks: Number(row.clicks)
+    }))
+
+    // Convertir les BigInt en Number pour éviter les erreurs de sérialisation JSON
+    return {
+      totalClicks: Number(totalClicks),
+      uniqueClicks: uniqueClicks.length,
+      deviceStats: deviceStats.map(d => ({ 
+        device: d.device, 
+        count: Number(d._count) 
+      })),
+      browserStats: browserStats.map(b => ({ 
+        browser: b.browser, 
+        count: Number(b._count) 
+      })),
+      countryStats: countryStats.map(c => ({ 
+        country: c.country, 
+        count: Number(c._count) 
+      })),
+      dailyStats
+    }
+  } catch (error) {
+    console.error('Erreur lors de la génération des analytics:', error)
+    // Retourner des données par défaut en cas d'erreur
+    return {
+      totalClicks: 0,
+      uniqueClicks: 0,
+      deviceStats: [],
+      browserStats: [],
+      countryStats: [],
+      dailyStats: []
+    }
   }
 }

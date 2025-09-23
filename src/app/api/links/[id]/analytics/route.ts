@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { getAnalyticsSummary } from "@/lib/analytics"
 import { prisma } from "@/lib/prisma"
+import { createSerializableResponse } from "@/lib/serialization"
 import type { Session } from "next-auth"
 
 export async function GET(
@@ -34,7 +35,11 @@ export async function GET(
     }
 
     const analytics = await getAnalyticsSummary(id)
-    return NextResponse.json(analytics)
+    
+    // S'assurer que toutes les données sont sérialisables
+    const serializableAnalytics = createSerializableResponse(analytics)
+    
+    return NextResponse.json(serializableAnalytics)
   } catch (error) {
     console.error("Erreur lors de la récupération des analytics:", error)
     return NextResponse.json(

@@ -4,6 +4,27 @@ import { useEffect, useState } from 'react'
 import { AnalyticsChart } from './analytics-chart'
 import { Globe, Monitor, Calendar, Users } from 'lucide-react'
 
+// Composants UI simples pour remplacer shadcn/ui
+const Card = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
+  <div className={`bg-card border border-border rounded-lg shadow-sm ${className}`}>{children}</div>
+)
+
+const CardHeader = ({ children }: { children: React.ReactNode }) => (
+  <div className="p-6 pb-2">{children}</div>
+)
+
+const CardTitle = ({ children }: { children: React.ReactNode }) => (
+  <h3 className="text-lg font-semibold text-card-foreground">{children}</h3>
+)
+
+const CardDescription = ({ children }: { children: React.ReactNode }) => (
+  <p className="text-sm text-muted-foreground mt-1">{children}</p>
+)
+
+const CardContent = ({ children }: { children: React.ReactNode }) => (
+  <div className="p-6 pt-2">{children}</div>
+)
+
 interface AnalyticsData {
   totalClicks: number
   uniqueClicks: number
@@ -20,6 +41,7 @@ interface AdvancedAnalyticsProps {
 export function AdvancedAnalytics({ linkId }: AdvancedAnalyticsProps) {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetchAnalytics()
@@ -27,13 +49,23 @@ export function AdvancedAnalytics({ linkId }: AdvancedAnalyticsProps) {
 
   const fetchAnalytics = async () => {
     try {
+      setError(null)
       const response = await fetch(`/api/links/${linkId}/analytics`)
-      if (response.ok) {
-        const data = await response.json()
-        setAnalytics(data)
+      
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`)
       }
+      
+      const data = await response.json()
+      
+      if (data.error) {
+        throw new Error(data.error)
+      }
+      
+      setAnalytics(data)
     } catch (error) {
       console.error('Erreur lors du chargement des analytics:', error)
+      setError(error instanceof Error ? error.message : 'Erreur inconnue')
     } finally {
       setLoading(false)
     }
@@ -41,9 +73,40 @@ export function AdvancedAnalytics({ linkId }: AdvancedAnalyticsProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Analytics Avancés</CardTitle>
+          <CardDescription>Chargement des données...</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Analytics Avancés</CardTitle>
+          <CardDescription>Erreur lors du chargement</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center h-64 text-center">
+            <p className="text-red-500 mb-4">Impossible de charger les analytics</p>
+            <p className="text-sm text-muted-foreground mb-4">{error}</p>
+            <button 
+              onClick={fetchAnalytics}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+            >
+              Réessayer
+            </button>
+          </div>
+        </CardContent>
+      </Card>
     )
   }
 
