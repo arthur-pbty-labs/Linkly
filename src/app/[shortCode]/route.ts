@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { recordClickEvent } from "@/lib/analytics"
 
 export async function GET(
   request: NextRequest,
@@ -29,6 +30,9 @@ export async function GET(
     if (link.maxClicks && link.clicks >= link.maxClicks) {
       return NextResponse.redirect(new URL('/limit-reached', request.url))
     }
+
+    // Enregistrer les analytics avancés
+    await recordClickEvent(link.id, request)
 
     // Mettre à jour les statistiques et l'historique
     const today = new Date()

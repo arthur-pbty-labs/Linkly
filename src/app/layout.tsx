@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -68,7 +69,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr">
+    <html lang="fr" suppressHydrationWarning>
       <head>
         <link rel="canonical" href="https://linkly.serverarthur.duckdns.org" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -94,9 +95,11 @@ export default function RootLayout({
         <meta httpEquiv="x-dns-prefetch-control" content="on" />
       </head>
       <body className={inter.className}>
-        <Providers>
-          {children}
-        </Providers>
+        <ThemeProvider>
+          <Providers>
+            {children}
+          </Providers>
+        </ThemeProvider>
       </body>
     </html>
   );

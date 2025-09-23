@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Header } from "@/components/header"
+import { AdvancedAnalytics } from "@/components/advanced-analytics"
 import { ArrowLeft, Copy, Check, QrCode, Calendar, MousePointer, Eye, TrendingUp } from "lucide-react"
 import Link from "next/link"
 import Head from "next/head"
@@ -321,6 +322,14 @@ export default function LinkDetails({ params }: { params: Promise<{ linkId: stri
               )}
             </div>
           </div>
+        </div>
+
+        {/* Analytics avancés */}
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+            Analytics avancés
+          </h2>
+          <AdvancedAnalytics linkId={link.id} />
         </div>
       </main>
     </div>
